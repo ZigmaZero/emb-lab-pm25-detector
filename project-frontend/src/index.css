@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Sukhumvit";
+  src: url("./assets/Sukhumvit.ttf");
+}
+
+@font-face {
+  font-family: "Sukhumvit-Bold";
+  src: url("./assets/Sukhumvit-Bold.ttf");
+}
+@font-face {
+  font-family: "Sukhumvit-SemiBold";
+  src: url("./assets/Sukhumvit-SemiBold.ttf");
+}
