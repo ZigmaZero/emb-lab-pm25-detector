@@ -1,47 +1,31 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+<template>
+  <div class="container">
+    <div class="grid grid-cols-6 gap-4">
+      <div class="col-start-1 col-end-7">
+        <HeaderField town="London" :AQI="50" />
+      </div>
+      <div class="col-start-1 col-end-3 m-4"><PmField :AQI="50" /></div>
+      <div class="col-end-6 col-span-2 m-4"><CarbonField :CO2="20" /></div>
+    </div>
+  </div>
+</template>
+<script>
+import HeaderField from "./components/HeaderField.vue";
+import CarbonField from "./components/CarbonField.vue";
+import PmField from "./components/PmField.vue";
+
+export default {
+  name: "LandingPage",
+  components: {
+    HeaderField,
+    CarbonField,
+    PmField,
+  },
+};
 </script>
 
-<template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
-</template>
-
 <style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+#map {
+  height: 180px;
 }
 </style>
