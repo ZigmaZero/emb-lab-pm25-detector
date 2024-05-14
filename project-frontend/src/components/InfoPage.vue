@@ -35,6 +35,4 @@ export default {
 };
 </script>
 
-<style scoped>
-/* Optional: Additional styles for the modal */
-</style>
+<style scoped></style>

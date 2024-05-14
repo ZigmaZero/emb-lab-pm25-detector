@@ -1,9 +1,11 @@
 <template>
   <div
-    class="rounded-lg p-8 m-4 text-4xl text-white text-center shadow-lg"
+    class="rounded-lg p-5 md:p-8 text-lg md:text-3xl mt-2 mb-0 text-white text-center shadow-lg"
     :style="{ backgroundColor: aqiColor }"
   >
-    <h1>Air Quality Index in {{ town }} is {{ aqiIndex }}</h1>
+    <h1>
+      Air Quality Index in {{ town }} is <b> {{ aqiIndex }}</b>
+    </h1>
   </div>
 </template>
 

@@ -1,21 +1,19 @@
 <template>
-  <div
-    class="landingPage min-h-screen bg-gray-100 flex flex-col justify-between relative"
-  >
+  <div class="landingPage min-h-screen flex flex-col justify-between relative">
     <div class="grid grid-cols-1 md:grid-cols-6 gap-4 p-4 flex-grow">
       <div class="col-span-1 md:col-span-6">
         <HeaderField :town="town" :AQI="AQI" />
       </div>
-      <div class="col-span-1 md:col-span-2 h-48">
+      <div class="col-span-1 md:col-span-2 h-36 md:h-48">
         <MapField :center="center" :markers="markers" />
       </div>
-      <div class="col-span-1 md:col-span-2 h-48">
+      <div class="col-span-1 md:col-span-2 h-36 md:h-48">
         <PmField :AQI="AQI" />
       </div>
-      <div class="col-span-1 md:col-span-2 h-48">
+      <div class="col-span-1 md:col-span-2 h-36 md:h-48">
         <CarbonField :CO2="CO2" />
       </div>
-      <div class="col-span-1 md:col-span-6">
+      <div class="col-span-1 md:col-span-6 h-36 md:h-48 mb-10">
         <ChartField />
       </div>
     </div>
@@ -143,9 +141,6 @@ export default {
 </script>
 
 <style scoped>
-* {
-  background-color: #e5e5e5;
-}
 button {
   padding: 10px;
   background-color: #4caf50;
