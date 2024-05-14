@@ -1,106 +1,93 @@
 <template>
-  <div class="rounded-lg">
-    <line-chart :chart-data="filteredData"></line-chart>
-    <button
-      v-for="timeFrame in timeFrames"
-      :key="timeFrame"
-      @click="changeTimeFrame(timeFrame)"
-    >
-      {{ timeFrame }}
-    </button>
+  <div class="flex flex-col items-center p-5">
+    <div class="flex gap-2 mb-4">
+      <div class="grid grid-cols-6 gap-4">
+        <div class="col-start-1 col-end-1 item-start">
+          <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2"
+            :class="{ 'opacity-50': !visible.AQI }"
+            @click="toggleData('AQI')"
+          >
+            AQI
+          </button>
+          <button
+            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            :class="{ 'opacity-50': !visible.CO2 }"
+            @click="toggleData('CO2')"
+          >
+            CO2
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="w-full max-w-screen-lg">
+      <LineChart :chart-data="chartData" :options="chartOptions" />
+    </div>
   </div>
 </template>
 
-<script>
-import { Line } from "vue-chartjs";
-import moment from "moment";
+<script lang="ts">
+import { defineComponent, ref } from "vue";
+import { LineChart } from "vue-chart-3";
+import { Chart, registerables } from "chart.js";
 
-export default {
-  components: {
-    LineChart: {
-      extends: Line,
-      props: ["chartData"],
-      watch: {
-        chartData: function (newData) {
-          this.renderChart(newData, {
-            responsive: true,
-            maintainAspectRatio: false,
-          });
+Chart.register(...registerables);
+
+export default defineComponent({
+  name: "Home",
+  components: { LineChart },
+  setup() {
+    const chartData = ref({
+      labels: ["January", "February", "March", "April", "May"],
+      datasets: [
+        {
+          label: "AQI Levels",
+          data: [120, 130, 110, 115, 140], // Example AQI data
+          borderColor: "rgb(255, 99, 132)",
+          tension: 0.1,
+          fill: false,
+        },
+        {
+          label: "CO2 Levels",
+          data: [400, 420, 410, 430, 450], // Example CO2 data
+          borderColor: "rgb(54, 162, 235)",
+          tension: 0.1,
+          fill: false,
+        },
+      ],
+    });
+
+    const visible = ref({
+      AQI: true,
+      CO2: true,
+    });
+
+    const chartOptions = {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true,
+          position: "top",
         },
       },
-      mounted() {
-        this.renderChart(this.chartData, {
-          responsive: true,
-          maintainAspectRatio: false,
-        });
-      },
-    },
-  },
-  data() {
-    return {
-      timeFrames: ["1M", "3M", "6M"],
-      allData: {
-        labels: Array.from({ length: 180 }, (_, i) =>
-          moment().subtract(i, "days").format("YYYY-MM-DD")
-        ).reverse(),
-        datasets: [
-          {
-            label: "AQI Index",
-            backgroundColor: "rgba(135, 206, 250, 0.5)",
-            borderColor: "royalblue",
-            data: Array.from(
-              { length: 180 },
-              () => Math.floor(Math.random() * 100) + 50
-            ),
-          },
-        ],
-      },
-      filteredData: null,
     };
-  },
-  created() {
-    this.filteredData = this.allData; // Initialize with all data
-  },
-  methods: {
-    changeTimeFrame(frame) {
-      const monthsAgo = frame === "1M" ? 1 : frame === "3M" ? 3 : 6;
-      const filteredLabels = [];
-      const filteredDataPoints = [];
 
-      this.allData.labels.forEach((label, index) => {
-        if (moment().subtract(monthsAgo, "months").isBefore(moment(label))) {
-          filteredLabels.push(label);
-          filteredDataPoints.push(this.allData.datasets[0].data[index]);
-        }
-      });
+    function toggleData(type) {
+      visible.value[type] = !visible.value[type];
+      const datasetIndex = type === "AQI" ? 0 : 1;
+      chartData.value.datasets[datasetIndex].hidden = !visible.value[type];
+    }
 
-      this.filteredData = {
-        labels: filteredLabels,
-        datasets: [
-          {
-            label: "AQI Index",
-            backgroundColor: "rgba(135, 206, 250, 0.5)",
-            borderColor: "royalblue",
-            data: filteredDataPoints,
-          },
-        ],
-      };
-    },
+    return { chartData, chartOptions, toggleData, visible };
   },
-};
+});
 </script>
 
 <style scoped>
-button {
-  margin: 5px;
-  padding: 8px 16px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
+button:focus {
+  outline: none;
 }
-button:hover {
-  background-color: #0056b3;
+button.opacity-50 {
+  opacity: 0.5;
 }
 </style>

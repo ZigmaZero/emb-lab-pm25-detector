@@ -2,17 +2,21 @@
   <div class="landingPage h-screen">
     <div class="grid grid-cols-6 gap-4">
       <div class="col-start-1 col-end-7">
-        <HeaderField :town="location" :AQI="AQI" />
+        <HeaderField :town="town" :AQI="AQI" />
       </div>
-      <div class="col-start-2 col-end-5 m-4">
+
+      <div class="col-start-1 col-end-3 m-4 h-48">
+        <MapField :center="center" :markers="markers" />
+      </div>
+      <div class="col-start-3 col-end-5 m-4 h-48">
         <PmField :AQI="AQI" />
       </div>
-      <div class="col-start-5 col-end-7 m-4">
+      <div class="col-start-5 col-end-7 m-4 h-48">
         <CarbonField :CO2="CO2" />
       </div>
-      <!-- <div class="col-start-1 col-end-7">
+      <div class="col-start-1 col-end-7">
         <ChartField />
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
@@ -22,6 +26,7 @@ import HeaderField from "./components/HeaderField.vue";
 import CarbonField from "./components/CarbonField.vue";
 import PmField from "./components/PmField.vue";
 import ChartField from "./components/ChartField.vue";
+import MapField from "./components/MapField.vue";
 import { getCO2, getPM } from "./AQIComputing.js";
 
 export default {
@@ -31,6 +36,7 @@ export default {
     CarbonField,
     PmField,
     ChartField,
+    MapField,
   },
   data() {
     return {
@@ -38,6 +44,15 @@ export default {
       location: null,
       CO2: 0,
       AQI: 0,
+      center: { lat: 51.093048, lng: 6.84212 },
+      markers: [
+        {
+          position: {
+            lat: 51.093048,
+            lng: 6.84212,
+          },
+        },
+      ],
     };
   },
   methods: {
@@ -47,6 +62,13 @@ export default {
           (position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
+            console.log("Latitude is", latitude, "Longitude is", longitude);
+            this.center = { lat: latitude, lng: longitude };
+            this.markers = [
+              {
+                position: { lat: latitude, lng: longitude },
+              },
+            ];
             this.getTownFromCoordinates(latitude, longitude);
           },
           (error) => {
@@ -60,7 +82,7 @@ export default {
       }
     },
     getTownFromCoordinates(latitude, longitude) {
-      const apiKey = process.env.GEO_API;
+      const apiKey = import.meta.env.VITE_GEO_API;
       const apiUrl = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}`;
 
       fetch(apiUrl)
@@ -92,12 +114,8 @@ export default {
       });
     },
   },
-  created() {
-    if (!this.location) {
-      this.getUserLocationAndTown();
-    }
-  },
   mounted() {
+    this.getUserLocationAndTown();
     this.updateCO2();
     this.updatePM();
     setInterval(this.updateCO2, 30000); // Update CO2 every 30 seconds
