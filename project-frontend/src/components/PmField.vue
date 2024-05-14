@@ -8,7 +8,7 @@
         class="absolute inset-0 flex flex-col items-center justify-center rounded-lg shadow-lg text-center [backface-visibility:hidden]"
         :style="{ backgroundColor: aqiColor }"
       >
-        <p class="text-sm font-medium text-white uppercase tracking-wide">
+        <p class="text-lg font-medium text-white uppercase tracking-wide">
           <b> Live AQI Index</b>
         </p>
         <h1 class="text-6xl font-bold text-white">{{ AQI }}</h1>
@@ -20,7 +20,9 @@
       >
         <div class="flex flex-col items-center justify-center h-full">
           <h1 class="text-3xl font-bold">{{ text }}</h1>
-          <p class="text-lg">The current AQI data comes from the XX sensor.</p>
+          <p class="text-lg px-2">
+            The current AQI data comes from the XX sensor.
+          </p>
           <!-- <p class="text-base">More info about air quality levels</p>
           <a
             :href="link"
