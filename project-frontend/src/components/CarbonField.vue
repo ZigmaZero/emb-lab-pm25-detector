@@ -1,9 +1,9 @@
 <template>
   <div
-    class="rounded-lg p-8 text-center shadow-lg"
+    class="rounded-lg text-center shadow-lg p-8 py-10"
     :style="{ backgroundColor: aqiColor }"
   >
-    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">
+    <p class="text-sm font-medium text-white uppercase tracking-wide">
       Live Co2 Index
     </p>
     <h1 class="text-6xl font-bold text-white">{{ CO2 }}</h1>
@@ -27,13 +27,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.rounded-lg {
-  padding: 20px;
-  border-radius: 8px;
-  color: #fff;
-  text-align: center;
-  transition: background-color 0.3s;
-}
-</style>

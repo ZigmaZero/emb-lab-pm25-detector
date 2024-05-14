@@ -13,9 +13,6 @@ export default {
         "sukhumvit-Bold": ["Sukhumvit-Bold", "sans-serif"],
         "sukhumvit-SemiBold": ["Sukhumvit-SemiBold", "sans-serif"],
       },
-      spacing: {
-        "5px": "5px",
-      },
     },
   },
   plugins: [],

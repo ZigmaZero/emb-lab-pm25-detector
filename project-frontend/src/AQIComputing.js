@@ -1,4 +1,3 @@
-// Assuming this is in AQIComputing.js
 export function getAQIStatus(aqi) {
   if (aqi >= 0 && aqi <= 50) {
     return { status: "Good", color: "#B3D071" };
@@ -18,8 +17,17 @@ export function getAQIStatus(aqi) {
 }
 
 export function getPM() {
-  return Math.floor(Math.random() * 350); // Adjusted for a wider range
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(Math.floor(Math.random() * 350)); // Simulating async operation with setTimeout
+    }, 1000); // Delay of 1 second
+  });
 }
+
 export function getCO2() {
-  return Math.floor(Math.random() * 2000); // Adjusted for a more realistic CO2 range
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(Math.floor(Math.random() * 2000)); // Simulating async operation with setTimeout
+    }, 1000); // Delay of 1 second
+  });
 }

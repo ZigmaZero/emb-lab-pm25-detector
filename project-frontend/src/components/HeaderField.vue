@@ -1,5 +1,8 @@
 <template>
-  <div class="rounded-lg p-8 m-4" :style="{ backgroundColor: aqiColor }">
+  <div
+    class="rounded-lg p-8 m-4 text-4xl text-white text-center shadow-lg"
+    :style="{ backgroundColor: aqiColor }"
+  >
     <h1>Air Quality Index in {{ town }} is {{ aqiIndex }}</h1>
   </div>
 </template>
@@ -28,13 +31,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.rounded-lg {
-  padding: 20px;
-  border-radius: 8px;
-  color: #fff;
-  text-align: center;
-  transition: background-color 0.3s;
-}
-</style>

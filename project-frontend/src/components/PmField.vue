@@ -1,9 +1,9 @@
 <template>
   <div
-    class="rounded-lg p-8 m-4 text-center shadow-lg"
+    class="rounded-lg p-8 text-center shadow-lg py-10"
     :style="{ backgroundColor: aqiColor }"
   >
-    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">
+    <p class="text-sm font-medium text-white uppercase tracking-wide">
       Live AQI Index
     </p>
     <h1 class="text-6xl font-bold text-white">{{ AQI }}</h1>
@@ -27,7 +27,3 @@ export default {
   },
 };
 </script>
-
-<style>
-/* Additional styles if needed */
-</style>
