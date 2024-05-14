@@ -1,23 +1,21 @@
 <template>
   <div class="flex flex-col items-center p-5">
-    <div class="flex gap-2 mb-4">
-      <div class="grid grid-cols-6 gap-4">
-        <div class="col-start-1 col-end-1 item-start">
-          <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2"
-            :class="{ 'opacity-50': !visible.AQI }"
-            @click="toggleData('AQI')"
-          >
-            AQI
-          </button>
-          <button
-            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-            :class="{ 'opacity-50': !visible.CO2 }"
-            @click="toggleData('CO2')"
-          >
-            CO2
-          </button>
-        </div>
+    <div class="flex justify-center w-full mb-4">
+      <div class="grid grid-cols-2 gap-4">
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          :class="{ 'opacity-50': !visible.AQI }"
+          @click="toggleData('AQI')"
+        >
+          AQI
+        </button>
+        <button
+          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          :class="{ 'opacity-50': !visible.CO2 }"
+          @click="toggleData('CO2')"
+        >
+          CO2
+        </button>
       </div>
     </div>
     <div class="w-full max-w-screen-lg">
@@ -25,6 +23,7 @@
     </div>
   </div>
 </template>
+>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";

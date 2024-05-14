@@ -4,7 +4,7 @@
     :style="{ backgroundColor: aqiColor }"
   >
     <p class="text-sm font-medium text-white uppercase tracking-wide">
-      Live AQI Index
+      <b> Live AQI Index</b>
     </p>
     <h1 class="text-6xl font-bold text-white">{{ AQI }}</h1>
   </div>

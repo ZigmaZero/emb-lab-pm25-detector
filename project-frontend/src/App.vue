@@ -1,23 +1,37 @@
 <template>
-  <div class="landingPage h-screen">
-    <div class="grid grid-cols-6 gap-4">
-      <div class="col-start-1 col-end-7">
+  <div
+    class="landingPage min-h-screen bg-gray-100 flex flex-col justify-between relative"
+  >
+    <div class="grid grid-cols-1 md:grid-cols-6 gap-4 p-4 flex-grow">
+      <div class="col-span-1 md:col-span-6">
         <HeaderField :town="town" :AQI="AQI" />
       </div>
-
-      <div class="col-start-1 col-end-3 m-4 h-48">
+      <div class="col-span-1 md:col-span-2 h-48">
         <MapField :center="center" :markers="markers" />
       </div>
-      <div class="col-start-3 col-end-5 m-4 h-48">
+      <div class="col-span-1 md:col-span-2 h-48">
         <PmField :AQI="AQI" />
       </div>
-      <div class="col-start-5 col-end-7 m-4 h-48">
+      <div class="col-span-1 md:col-span-2 h-48">
         <CarbonField :CO2="CO2" />
       </div>
-      <div class="col-start-1 col-end-7">
+      <div class="col-span-1 md:col-span-6">
         <ChartField />
       </div>
     </div>
+
+    <button
+      @click="isModalOpen = true"
+      class="fixed bottom-0 left-0 m-4 flex items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded w-auto text-sm"
+    >
+      <img
+        src="./assets/image/info_icon.webp"
+        alt="Info"
+        class="h-4 w-4 mr-2"
+      />
+      Info
+    </button>
+    <InfoPage v-if="isModalOpen" @close="isModalOpen = false" />
   </div>
 </template>
 
@@ -27,7 +41,9 @@ import CarbonField from "./components/CarbonField.vue";
 import PmField from "./components/PmField.vue";
 import ChartField from "./components/ChartField.vue";
 import MapField from "./components/MapField.vue";
+import InfoPage from "./components/InfoPage.vue";
 import { getCO2, getPM } from "./AQIComputing.js";
+import InfoPageVue from "./components/InfoPage.vue";
 
 export default {
   name: "LandingPage",
@@ -37,10 +53,12 @@ export default {
     PmField,
     ChartField,
     MapField,
+    InfoPage,
   },
   data() {
     return {
       town: "your location",
+      isModalOpen: false,
       location: null,
       CO2: 0,
       AQI: 0,
@@ -135,5 +153,9 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+img {
+  background: none; /* Ensures no background is applied */
+  border: none; /* Removes any border that might obscure transparency */
 }
 </style>
