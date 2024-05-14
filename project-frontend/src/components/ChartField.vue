@@ -18,11 +18,12 @@
         </button>
       </div>
     </div>
-    <div
-      class="w-full max-w-screen-lg mb-20 md:mb-12"
-      :style="{ height: chartHeight + 'px' }"
-    >
-      <LineChart :chart-data="chartData" :options="chartOptions" />
+    <div class="w-full max-w-screen-lg mb-20 md:mb-12">
+      <LineChart
+        :chart-data="chartData"
+        :options="chartOptions"
+        style="height: 35vh"
+      />
     </div>
   </div>
 </template>
@@ -74,37 +75,36 @@ export default defineComponent({
       },
     };
 
-    const chartHeight = ref(400); // Initial height of the chart
+    // const chartHeight = ref(250); // Initial height of the chart
 
-    function toggleData(type) {
-      visible.value[type] = !visible.value[type];
-      const datasetIndex = type === "AQI" ? 0 : 1;
-      chartData.value.datasets[datasetIndex].hidden = !visible.value[type];
-    }
+    // function toggleData(type) {
+    //   visible.value[type] = !visible.value[type];
+    //   const datasetIndex = type === "AQI" ? 0 : 1;
+    //   chartData.value.datasets[datasetIndex].hidden = !visible.value[type];
+    // }
 
-    // Watch for changes in the chart container's height and update the chart height accordingly
-    watch(chartData, () => {
-      nextTick(() => {
-        updateChartHeight();
-      });
-    });
+    // // Watch for changes in the chart container's height and update the chart height accordingly
+    // watch(chartData, () => {
+    //   nextTick(() => {
+    //     updateChartHeight();
+    //   });
+    // });
 
-    // Update chart height on mount and resize
-    onMounted(() => {
-      updateChartHeight();
-      window.addEventListener("resize", updateChartHeight);
-    });
+    // // Update chart height on mount and resize
+    // onMounted(() => {
+    //   updateChartHeight();
+    //   window.addEventListener("resize", updateChartHeight);
+    // });
 
-    // Function to update chart height based on screen size
-    function updateChartHeight() {
-      const chartContainer = document.querySelector(".max-w-screen-lg");
-      if (chartContainer) {
-        chartHeight.value =
-          window.innerWidth <= 640 ? 300 : chartContainer.clientHeight;
-      }
-    }
+    // // Function to update chart height based on screen size
+    // function updateChartHeight() {
+    //   const chartContainer = document.querySelector(".max-w-screen-lg");
+    //   if (chartContainer) {
+    //     chartHeight.value = window.innerWidth <= 640 ? 150 : 250;
+    //   }
+    // }
 
-    return { chartData, chartOptions, toggleData, visible, chartHeight };
+    return { chartData, chartOptions, visible };
   },
 });
 </script>
