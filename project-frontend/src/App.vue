@@ -141,6 +141,18 @@ export default {
 </script>
 
 <style scoped>
+@font-face {
+  font-family: "Sukhumvit";
+  src: url("./assets/Sukhumvit.ttf") format("truetype");
+}
+
+#app {
+  font-family: "Sukhumvit";
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-display: swap;
+}
 button {
   padding: 10px;
   background-color: #4caf50;

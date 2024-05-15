@@ -77,11 +77,11 @@ export default defineComponent({
 
     // const chartHeight = ref(250); // Initial height of the chart
 
-    // function toggleData(type) {
-    //   visible.value[type] = !visible.value[type];
-    //   const datasetIndex = type === "AQI" ? 0 : 1;
-    //   chartData.value.datasets[datasetIndex].hidden = !visible.value[type];
-    // }
+    function toggleData(type) {
+      visible.value[type] = !visible.value[type];
+      const datasetIndex = type === "AQI" ? 0 : 1;
+      chartData.value.datasets[datasetIndex].hidden = !visible.value[type];
+    }
 
     // // Watch for changes in the chart container's height and update the chart height accordingly
     // watch(chartData, () => {
@@ -104,7 +104,7 @@ export default defineComponent({
     //   }
     // }
 
-    return { chartData, chartOptions, visible };
+    return { chartData, chartOptions, visible, toggleData };
   },
 });
 </script>
