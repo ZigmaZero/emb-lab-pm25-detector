@@ -9,7 +9,7 @@
         :style="{ backgroundColor: aqiColor }"
       >
         <p class="text-lg font-medium text-white uppercase tracking-wide">
-          <b> Live AQI Index</b>
+          <b> Live PM2.5</b>
         </p>
         <h1 class="text-6xl font-bold text-white">{{ AQI }}</h1>
       </div>
@@ -21,7 +21,7 @@
         <div class="flex flex-col items-center justify-center h-full">
           <h1 class="text-3xl font-bold">{{ text }}</h1>
           <p class="text-lg px-2">
-            The current AQI data comes from the XX sensor.
+            The current PM2.5 data comes from nearest sensor.
           </p>
           <!-- <p class="text-base">More info about air quality levels</p>
           <a

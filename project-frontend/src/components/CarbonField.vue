@@ -21,7 +21,7 @@
         <div class="flex flex-col items-center justify-center h-full">
           <h1 class="text-3xl font-bold">{{ text }}</h1>
           <p class="text-lg px-2">
-            The current CO2 data comes from the XX sensor.
+            The current CO2 data comes from the nearest sensor.
           </p>
           <!-- <p class="text-base">Tips for reducing emissions</p>
           <a
