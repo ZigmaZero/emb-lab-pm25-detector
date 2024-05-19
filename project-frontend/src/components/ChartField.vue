@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center p-1">
     <div class="flex justify-center w-full mb-4 h-full">
-      <div class="grid grid-cols-2 gap-4">
+      <div class="flex justify-center items-center h-full">
         <button
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           :class="{ 'opacity-50': !visible.AQI }"
@@ -72,15 +72,10 @@ export default defineComponent({
       if (data) {
         const labels = [];
         const values = [];
-        const now = new Date();
         data.forEach((point) => {
           const date = new Date(point[0]);
-          const timeDiff = (now - date) / 1000; // time difference in seconds
-          if (timeDiff >= 60) {
-            // if time difference is more than a minute
-            labels.push(date.toLocaleTimeString());
-            values.push(point[1] * 1000); // Convert milligrams to micrograms
-          }
+          labels.push(date.toLocaleTimeString());
+          values.push(point[1] * 1000); // Convert milligrams to micrograms
         });
         chartData.value.labels = labels;
         chartData.value.datasets[0].data = values;
@@ -89,7 +84,6 @@ export default defineComponent({
 
     onMounted(() => {
       fetchData();
-      setInterval(fetchData, 15000); // Fetch data every 15 seconds
     });
 
     return { chartData, chartOptions, visible, toggleData };
