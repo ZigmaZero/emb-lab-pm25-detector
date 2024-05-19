@@ -5,10 +5,15 @@
         <HeaderField :town="town" :AQI="AQI" />
       </div>
       <div class="col-span-1 md:col-span-2 h-36 md:h-48">
-        <MapField :center="center" :markers="markers" />
+        <MapField
+          :center="center"
+          :markers="markers"
+          :position="sensor_position"
+          :pm25="AQI"
+        />
       </div>
       <div class="col-span-1 md:col-span-2 h-36 md:h-48">
-        <PmField :AQI="AQI" />
+        <PmField :AQI="AQI" :location="sensor_position" />
       </div>
       <div class="col-span-1 md:col-span-2 h-36 md:h-48">
         <CarbonField :CO2="CO2" />
@@ -40,9 +45,8 @@ import PmField from "./components/PmField.vue";
 import ChartField from "./components/ChartField.vue";
 import MapField from "./components/MapField.vue";
 import InfoPage from "./components/InfoPage.vue";
-import { getCO2, getPM } from "./AQIComputing.js";
-import InfoPageVue from "./components/InfoPage.vue";
-
+// import { getLatestSensorData } from "./AQIComputing.js"; // Ensure this path is correct
+import { getCurrentData } from "./APIConfig.js";
 export default {
   name: "LandingPage",
   components: {
@@ -60,25 +64,30 @@ export default {
       location: null,
       CO2: 0,
       AQI: 0,
-      center: { lat: 51.093048, lng: 6.84212 },
-      markers: [
-        {
-          position: {
-            lat: 51.093048,
-            lng: 6.84212,
-          },
-        },
-      ],
+      center: { lat: 13.7370133, lng: 100.5305989 },
+      markers: [],
+      sensor_position: { lat: 13.7370133, lng: 100.5305989 },
     };
   },
   methods: {
+    async fetchSensorData() {
+      try {
+        const data = await getCurrentData();
+        console.log(data);
+        this.AQI = data.pm25;
+        this.CO2 = 0;
+        this.sensor_position = { lat: data.lat, lng: data.lng };
+      } catch (error) {
+        console.error("Failed to fetch sensor data", error);
+      }
+    },
     getUserLocationAndTown() {
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
-            console.log("Latitude is", latitude, "Longitude is", longitude);
+
             this.center = { lat: latitude, lng: longitude };
             this.markers = [
               {
@@ -94,7 +103,6 @@ export default {
         );
       } else {
         this.location = "Geolocation is not supported by this browser.";
-        console.log(this.location);
       }
     },
     getTownFromCoordinates(latitude, longitude) {
@@ -109,7 +117,6 @@ export default {
               data.results[0].components.town ||
               data.results[0].components.city;
             this.location = this.town || "an unknown location";
-            console.log(this.location);
           } else {
             this.location = "No results found.";
           }
@@ -119,23 +126,12 @@ export default {
           this.location = "Error retrieving location data.";
         });
     },
-    updateCO2() {
-      getCO2().then((co2Value) => {
-        this.CO2 = co2Value;
-      });
-    },
-    updatePM() {
-      getPM().then((pmValue) => {
-        this.AQI = pmValue;
-      });
-    },
   },
+
   mounted() {
     this.getUserLocationAndTown();
-    this.updateCO2();
-    this.updatePM();
-    setInterval(this.updateCO2, 30000); // Update CO2 every 30 seconds
-    setInterval(this.updatePM, 30000); // Update PM2.5 every 30 seconds
+    this.fetchSensorData();
+    setInterval(this.fetchSensorData, 15000); // Update data every 30 seconds
   },
 };
 </script>

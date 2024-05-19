@@ -11,6 +11,7 @@
       :position="m.position"
       :clickable="true"
       :draggable="false"
+      :icon="getMarkerColor(m.id)"
       @click="openMarker(m.id)"
     >
       <GMapInfoWindow
@@ -18,7 +19,10 @@
         @closeclick="openMarker(null)"
         :opened="openedMarkerID === m.id"
       >
-        <div>Devie No {{ m.id }} Current AQI 50 Current CO2 20</div>
+        <div v-if="m.id === 1">
+          Device No {{ m.id }} Current AQI {{ pm25 }} Current CO2 20
+        </div>
+        <div v-else>Device No {{ m.id }} Default Data</div>
       </GMapInfoWindow>
     </GMapMarker>
   </GMapMap>
@@ -26,6 +30,16 @@
 
 <script>
 export default {
+  props: {
+    position: {
+      type: Object,
+      default: () => ({ lat: 13.735172, lng: 100.5330905 }), // Default position if none provided
+    },
+    pm25: {
+      type: Number,
+      default: 0,
+    },
+  },
   data() {
     return {
       openedMarkerID: null,
@@ -33,10 +47,7 @@ export default {
       markers: [
         {
           id: 1,
-          position: {
-            lat: 13.735172,
-            lng: 100.5330905,
-          },
+          position: this.position, // Use position prop for the first marker
         },
         {
           id: 2,
@@ -76,9 +87,19 @@ export default {
       ],
     };
   },
+  created() {
+    this.center = this.position;
+  },
   methods: {
     openMarker(id) {
       this.openedMarkerID = id;
+    },
+    getMarkerColor(id) {
+      if (id === 1) {
+        return "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"; // Blue color marker
+      } else {
+        return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; // Red color marker (default)
+      }
     },
   },
 };

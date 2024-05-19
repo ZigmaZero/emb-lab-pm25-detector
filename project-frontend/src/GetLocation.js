@@ -20,7 +20,7 @@ export function getUserLocationAndTown() {
 
 // Function to convert coordinates to a town name using OpenCage API
 function getTownFromCoordinates(latitude, longitude) {
-  const apiKey = process.env.VUE_APP_GEO_API; // Replace 'YOUR_API_KEY' with your actual OpenCage API key
+  const apiKey = process.env.VITE_GEO_API;
   const apiUrl = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}`;
 
   fetch(apiUrl)
