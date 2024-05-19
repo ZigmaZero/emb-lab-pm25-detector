@@ -72,10 +72,15 @@ export default defineComponent({
       if (data) {
         const labels = [];
         const values = [];
+        const now = new Date();
         data.forEach((point) => {
           const date = new Date(point[0]);
-          labels.push(date.toLocaleTimeString());
-          values.push(point[1] * 1000); // Convert milligrams to micrograms
+          const timeDiff = (now - date) / 1000; // time difference in seconds
+          if (timeDiff >= 60) {
+            // if time difference is more than a minute
+            labels.push(date.toLocaleTimeString());
+            values.push(point[1] * 1000); // Convert milligrams to micrograms
+          }
         });
         chartData.value.labels = labels;
         chartData.value.datasets[0].data = values;
@@ -84,6 +89,7 @@ export default defineComponent({
 
     onMounted(() => {
       fetchData();
+      setInterval(fetchData, 15000); // Fetch data every 15 seconds
     });
 
     return { chartData, chartOptions, visible, toggleData };

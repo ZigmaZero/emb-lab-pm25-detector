@@ -48,7 +48,7 @@ export async function getCurrentData() {
     console.log("lat", lat, "lng", lng, "pm2.5", pm25);
     return { lat: lat, lng: lng, pm25: pm25 };
   } else {
-    console.error("Failed to retrieve shadow data", response.statusText);
+    console.error("Failed to retrieve Current data", response.statusText);
   }
 }
 
@@ -85,11 +85,11 @@ export async function getGraph() {
     try {
       pm25 = data.queries[0].results.map((result) => result.values);
     } catch (e) {
-      console.error("Error retrieving pm2.5 data", e);
+      console.error("Error retrieving pm2.5 Graph data", e);
     }
     // console.log(pm25[0]);
     return pm25[0];
   } else {
-    console.error("Failed to retrieve shadow data", response.statusText);
+    console.error("Failed to retrieve Graph data", response.statusText);
   }
 }
