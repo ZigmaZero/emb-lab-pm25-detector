@@ -1,15 +1,15 @@
 export function getAQIStatus(aqi) {
-  if (aqi >= 0 && aqi <= 50) {
+  if (aqi >= 0 && aqi <= 9) {
     return { status: "Good", color: "#B3D071" };
-  } else if (aqi > 50 && aqi <= 100) {
+  } else if (aqi > 9 && aqi <= 35.4) {
     return { status: "Moderate", color: "#F2D573" };
-  } else if (aqi > 100 && aqi <= 150) {
+  } else if (aqi > 35.4 && aqi <= 55.4) {
     return { status: "Unhealthy for Sensitive Groups", color: "#ED9E63" };
-  } else if (aqi > 150 && aqi <= 200) {
+  } else if (aqi > 55.4 && aqi <= 125.4) {
     return { status: "Unhealthy", color: "#E5716E" };
-  } else if (aqi > 200 && aqi <= 300) {
+  } else if (aqi > 125.5 && aqi <= 255.4) {
     return { status: "Very Unhealthy", color: "#9E7FB4" };
-  } else if (aqi > 300) {
+  } else if (aqi > 255.4) {
     return { status: "Hazardous", color: "#9A7985" };
   } else {
     return { status: "Invalid", color: "#FFFFFF" };
