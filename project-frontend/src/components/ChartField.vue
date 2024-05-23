@@ -7,7 +7,7 @@
           :class="{ 'opacity-50': !visible.AQI }"
           @click="toggleData('AQI')"
         >
-          AQI
+          PM2.5
         </button>
       </div>
     </div>
@@ -37,7 +37,7 @@ export default defineComponent({
       labels: [],
       datasets: [
         {
-          label: "AQI Levels",
+          label: "PM2.5 Levels",
           data: [],
           borderColor: "rgb(255, 99, 132)",
           tension: 0.1,
