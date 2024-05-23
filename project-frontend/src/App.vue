@@ -12,12 +12,12 @@
           :pm25="AQI"
         />
       </div>
-      <div class="col-span-1 md:col-span-2 h-36 md:h-48">
+      <div class="col-span-1 md:col-span-4 h-36 md:h-48">
         <PmField :AQI="AQI" :location="sensor_position" />
       </div>
-      <div class="col-span-1 md:col-span-2 h-36 md:h-48">
+      <!-- <div class="col-span-1 md:col-span-2 h-36 md:h-48">
         <CarbonField :CO2="CO2" />
-      </div>
+      </div> -->
       <div class="col-span-1 md:col-span-6 h-36 md:h-48 mb-10">
         <ChartField />
       </div>
@@ -45,7 +45,6 @@ import PmField from "./components/PmField.vue";
 import ChartField from "./components/ChartField.vue";
 import MapField from "./components/MapField.vue";
 import InfoPage from "./components/InfoPage.vue";
-// import { getLatestSensorData } from "./AQIComputing.js"; // Ensure this path is correct
 import { getCurrentData } from "./APIConfig.js";
 export default {
   name: "LandingPage",
@@ -75,7 +74,7 @@ export default {
         const data = await getCurrentData();
         console.log(data);
         this.AQI = data.pm25;
-        this.CO2 = 0;
+        this.CO2 = 1;
         this.sensor_position = { lat: data.lat, lng: data.lng };
       } catch (error) {
         console.error("Failed to fetch sensor data", error);

@@ -27,7 +27,7 @@ export function getPM() {
 export function getCO2() {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(Math.floor(Math.random() * 2000)); // Simulating async operation with setTimeout
+      resolve(Math.floor((Math.random() * 10) % 10)); // Simulating async operation with setTimeout
     }, 1000); // Delay of 1 second
   });
 }
