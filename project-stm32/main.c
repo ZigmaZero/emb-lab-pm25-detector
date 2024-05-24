@@ -56,9 +56,9 @@ UART_HandleTypeDef huart6;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_USART1_UART_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM1_Init(void);
+static void MX_USART1_UART_Init(void);
 static void MX_USART6_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -66,6 +66,7 @@ static void MX_USART6_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+volatile uint8_t measurement_flag = 0;
 volatile uint8_t dataReceived;
 volatile uint8_t buffer[100];
 volatile uint16_t head = 0;
@@ -100,16 +101,20 @@ void processNMEA() {
 /* Read PM2.5 sensor */
 static float read_PM25_sensor(void)
 {
+  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_0, GPIO_PIN_RESET);
+  //HAL_Delay(280);
   HAL_ADC_Start(&hadc1);
   HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
   uint32_t adcValue = HAL_ADC_GetValue(&hadc1);
+  HAL_Delay(40);
+  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_0, GPIO_PIN_SET);
 
   // Convert ADC value to PM2.5 using the appropriate calculation
   float voltage = ((3.3*adcValue)/4095);
-  if(voltage <= 0.9) {
+  /*if(voltage <= 0.9) {
 	  voltage = 0.9;
-  }
-  float dustValue = (voltage-0.9)*0.2;
+  }*/
+  float dustValue = (voltage)*0.17;
   // Example: return adcValue / 10;  // Placeholder conversion formula
   return dustValue;  // Use the real conversion formula here
 }
@@ -151,6 +156,7 @@ void stripWhitespace(char *str) {
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -174,12 +180,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
-  MX_USART1_UART_Init();
   MX_ADC1_Init();
   MX_TIM1_Init();
+  MX_USART1_UART_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
-  /* see callback functions at the bottom of this file (user code 4) */
   HAL_UART_Receive_IT(&huart1, &dataReceived, sizeof(dataReceived));
   HAL_TIM_Base_Start_IT(&htim1);
   /* USER CODE END 2 */
@@ -187,25 +192,52 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {
-	  /* check if GPS's message is complete or not */
-	  /* call processNMEA() is complete */
-	  while (tail != head) {
-		  static uint8_t bufferIndex = 0;
-		  uint8_t byte = buffer[tail];
-		  tail = (tail + 1) % 100;
+   {
+ 	  /* check if GPS's message is complete or not */
+ 	  /* call processNMEA() is complete */
+		if(measurement_flag) {
+			measurement_flag = 0;
+		    float pm25 = read_PM25_sensor();
+		    // Turn LED on according dustval
+		    if(pm25 < 0.05) {
+		    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);
+		    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET);
+		    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+		    } else if (pm25 < 0.15){
+		    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_SET);
+		    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_RESET);
+		    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+		    } else {
+		    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+		    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_RESET);
+		    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET);
+		    }
+		    // Decompose dustval to string (sprintf won't work with float)
+		    int before_decimal = (int)pm25;
+		    int after_decimal = (int)(100*(pm25-before_decimal));
+		    sprintf(pmbuffer, "s%d.%d,", before_decimal, after_decimal);
+		    // Transmit the message to ESP8266 in the correct format
+		    HAL_UART_Transmit(&huart6, strcat(pmbuffer,latlongbuffer) , strlen(pmbuffer), HAL_MAX_DELAY);
 
-		  if(byte == '\n') {
-			  nmeaSentence[bufferIndex] = '\0';
-			  bufferIndex = 0;
-			  processNMEA();
-		  } else {
-			  nmeaSentence[bufferIndex++] = byte;
-			  if (bufferIndex >= sizeof(nmeaSentence) - 1) {
-				  bufferIndex = 0; // Prevent buffer overflow
-			  }
-		  }
-	  }
+		    // uncomment to debug (print the sent message to console (baudrate=115200))
+		    HAL_UART_Transmit(&huart2, (uint8_t*)pmbuffer, strlen(pmbuffer), HAL_MAX_DELAY);
+		}
+ 	  while (tail != head) {
+ 		  static uint8_t bufferIndex = 0;
+ 		  uint8_t byte = buffer[tail];
+ 		  tail = (tail + 1) % 100;
+
+ 		  if(byte == '\n') {
+ 			  nmeaSentence[bufferIndex] = '\0';
+ 			  bufferIndex = 0;
+ 			  processNMEA();
+ 		  } else {
+ 			  nmeaSentence[bufferIndex++] = byte;
+ 			  if (bufferIndex >= sizeof(nmeaSentence) - 1) {
+ 				  bufferIndex = 0; // Prevent buffer overflow
+ 			  }
+ 		  }
+ 	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -477,7 +509,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0|GPIO_PIN_1, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|LD2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
@@ -495,12 +527,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD2_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin;
+  /*Configure GPIO pins : PA0 LD2_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|LD2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PB0 */
   GPIO_InitStruct.Pin = GPIO_PIN_0;
@@ -534,33 +566,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 /* Then send all datas to ESP8266 is the format "s{dustval},{latval},{latdir},{lonval},{londir}"  (s to indicate the start of the data)*/
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	if(htim == &htim1) {
-	    float pm25 = read_PM25_sensor();
-	    if(pm25 < 0) {
-	    	pm25 = -pm25;
-	    }
-	    // Turn LED on according dustval
-	    if(pm25 < 0.05) {
-	    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);
-	    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET);
-	    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-	    } else if (pm25 < 0.15){
-	    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_SET);
-	    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_RESET);
-	    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-	    } else {
-	    	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
-	    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_RESET);
-	    	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET);
-	    }
-	    // Decompose dustval to string (sprintf won't work with float)
-	    int before_decimal = (int)pm25;
-	    int after_decimal = (int)(100*(pm25-before_decimal));
-	    sprintf(pmbuffer, "s%d.%d,", before_decimal, after_decimal);
-	    // Transmit the message to ESP8266 in the correct format
-	    HAL_UART_Transmit(&huart6, strcat(pmbuffer,latlongbuffer) , strlen(pmbuffer), HAL_MAX_DELAY);
-
-	    // uncomment to debug (print the sent message to console (baudrate=115200))
-//	    HAL_UART_Transmit(&huart2, (uint8_t*)pmbuffer, strlen(pmbuffer), HAL_MAX_DELAY);
+	    measurement_flag = 1;
 	}
 }
 /* USER CODE END 4 */
